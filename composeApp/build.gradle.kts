@@ -62,11 +62,11 @@ kotlin {
 }
 
 android {
-    namespace = "com.jetbrains.kmpapp"
-    compileSdk = 35
+    namespace = "com.gosty.seenit"
+    compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.jetbrains.kmpapp"
+        applicationId = "com.gosty.seenit"
         minSdk = 24
         targetSdk = 35
         versionCode = 1
