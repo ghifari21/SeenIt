@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -7,6 +8,23 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinxSerialization)
+    alias(libs.plugins.buildkonfig)
+}
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.inputStream())
+}
+
+buildConfig {
+    packageName("com.gosty.seenit.config")
+
+    buildConfigField(
+        "String",
+        "API_KEY",
+        "\"${localProperties.getProperty("TMDB_API_KEY")}\""
+    )
 }
 
 kotlin {
@@ -52,13 +70,15 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.ktor.client.auth)
 
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
             implementation(libs.koin.core)
             implementation(libs.koin.compose.viewmodel)
 
-            implementation(project(":core:common"))
+            implementation(projects.core.common)
+            implementation(projects.core.data)
         }
     }
 }
@@ -73,6 +93,7 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
+
     }
     packaging {
         resources {
