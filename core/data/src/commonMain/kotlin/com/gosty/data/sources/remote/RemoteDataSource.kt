@@ -8,45 +8,45 @@ import com.gosty.data.api.responses.TVDetailResponse
 import com.gosty.data.api.responses.TVListsResult
 
 interface RemoteDataSource {
-    suspend fun fetchNowPlayingMovies(): PagingSource<Int, MovieListsResult>
-    suspend fun fetchPopularMovies(): PagingSource<Int, MovieListsResult>
-    suspend fun fetchTopRatedMovies(): PagingSource<Int, MovieListsResult>
-    suspend fun fetchUpcomingMovies(): PagingSource<Int, MovieListsResult>
+    fun fetchNowPlayingMovies(): PagingSource<Int, MovieListsResult>
+    fun fetchPopularMovies(): PagingSource<Int, MovieListsResult>
+    fun fetchTopRatedMovies(): PagingSource<Int, MovieListsResult>
+    fun fetchUpcomingMovies(): PagingSource<Int, MovieListsResult>
     suspend fun fetchMovieDetails(movieId: Int): MovieDetailResponse
-    suspend fun fetchMovieRecommendations(movieId: Int): PagingSource<Int, MovieListsResult>
-    suspend fun searchMovies(query: String): PagingSource<Int, MovieListsResult>
-    suspend fun fetchTVAiringToday(): PagingSource<Int, TVListsResult>
-    suspend fun fetchTVOnTheAir(): PagingSource<Int, TVListsResult>
-    suspend fun fetchTVPopular(): PagingSource<Int, TVListsResult>
-    suspend fun fetchTVTopRated(): PagingSource<Int, TVListsResult>
+    fun fetchMovieRecommendations(movieId: Int): PagingSource<Int, MovieListsResult>
+    fun searchMovies(query: String): PagingSource<Int, MovieListsResult>
+    fun fetchTVAiringToday(): PagingSource<Int, TVListsResult>
+    fun fetchTVOnTheAir(): PagingSource<Int, TVListsResult>
+    fun fetchTVPopular(): PagingSource<Int, TVListsResult>
+    fun fetchTVTopRated(): PagingSource<Int, TVListsResult>
     suspend fun fetchTVDetails(tvId: Int): TVDetailResponse
-    suspend fun fetchTVRecommendations(tvId: Int): PagingSource<Int, TVListsResult>
-    suspend fun searchTVShows(query: String): PagingSource<Int, TVListsResult>
+    fun fetchTVRecommendations(tvId: Int): PagingSource<Int, TVListsResult>
+    fun searchTVShows(query: String): PagingSource<Int, TVListsResult>
 }
 
 class RemoteDataSourceImpl(private val apiService: ApiService) : RemoteDataSource {
-    override suspend fun fetchNowPlayingMovies(): PagingSource<Int, MovieListsResult> {
+    override fun fetchNowPlayingMovies(): PagingSource<Int, MovieListsResult> {
         return MoviePagingSource(
             apiService = apiService,
             movieType = MovieType.NOW_PLAYING
         )
     }
 
-    override suspend fun fetchPopularMovies(): PagingSource<Int, MovieListsResult> {
+    override fun fetchPopularMovies(): PagingSource<Int, MovieListsResult> {
         return MoviePagingSource(
             apiService = apiService,
             movieType = MovieType.POPULAR
         )
     }
 
-    override suspend fun fetchTopRatedMovies(): PagingSource<Int, MovieListsResult> {
+    override fun fetchTopRatedMovies(): PagingSource<Int, MovieListsResult> {
         return MoviePagingSource(
             apiService = apiService,
             movieType = MovieType.TOP_RATED
         )
     }
 
-    override suspend fun fetchUpcomingMovies(): PagingSource<Int, MovieListsResult> {
+    override fun fetchUpcomingMovies(): PagingSource<Int, MovieListsResult> {
         return MoviePagingSource(
             apiService = apiService,
             movieType = MovieType.UPCOMING
@@ -57,7 +57,7 @@ class RemoteDataSourceImpl(private val apiService: ApiService) : RemoteDataSourc
         return apiService.fetchMovieDetails(movieId)
     }
 
-    override suspend fun fetchMovieRecommendations(movieId: Int): PagingSource<Int, MovieListsResult> {
+    override fun fetchMovieRecommendations(movieId: Int): PagingSource<Int, MovieListsResult> {
         return MoviePagingSource(
             apiService = apiService,
             movieType = MovieType.RECOMMENDATIONS,
@@ -65,7 +65,7 @@ class RemoteDataSourceImpl(private val apiService: ApiService) : RemoteDataSourc
         )
     }
 
-    override suspend fun searchMovies(query: String): PagingSource<Int, MovieListsResult> {
+    override fun searchMovies(query: String): PagingSource<Int, MovieListsResult> {
         return MoviePagingSource(
             apiService = apiService,
             movieType = MovieType.SEARCH,
@@ -73,28 +73,28 @@ class RemoteDataSourceImpl(private val apiService: ApiService) : RemoteDataSourc
         )
     }
 
-    override suspend fun fetchTVAiringToday(): PagingSource<Int, TVListsResult> {
+    override fun fetchTVAiringToday(): PagingSource<Int, TVListsResult> {
         return TVPagingSource(
             apiService = apiService,
             tvType = TVType.AIRING_TODAY
         )
     }
 
-    override suspend fun fetchTVOnTheAir(): PagingSource<Int, TVListsResult> {
+    override fun fetchTVOnTheAir(): PagingSource<Int, TVListsResult> {
         return TVPagingSource(
             apiService = apiService,
             tvType = TVType.ON_THE_AIR
         )
     }
 
-    override suspend fun fetchTVPopular(): PagingSource<Int, TVListsResult> {
+    override fun fetchTVPopular(): PagingSource<Int, TVListsResult> {
         return TVPagingSource(
             apiService = apiService,
             tvType = TVType.POPULAR
         )
     }
 
-    override suspend fun fetchTVTopRated(): PagingSource<Int, TVListsResult> {
+    override fun fetchTVTopRated(): PagingSource<Int, TVListsResult> {
         return TVPagingSource(
             apiService = apiService,
             tvType = TVType.TOP_RATED
@@ -105,7 +105,7 @@ class RemoteDataSourceImpl(private val apiService: ApiService) : RemoteDataSourc
         return apiService.fetchTVDetails(tvId)
     }
 
-    override suspend fun fetchTVRecommendations(tvId: Int): PagingSource<Int, TVListsResult> {
+    override fun fetchTVRecommendations(tvId: Int): PagingSource<Int, TVListsResult> {
         return TVPagingSource(
             apiService = apiService,
             tvType = TVType.RECOMMENDATIONS,
@@ -113,7 +113,7 @@ class RemoteDataSourceImpl(private val apiService: ApiService) : RemoteDataSourc
         )
     }
 
-    override suspend fun searchTVShows(query: String): PagingSource<Int, TVListsResult> {
+    override fun searchTVShows(query: String): PagingSource<Int, TVListsResult> {
         return TVPagingSource(
             apiService = apiService,
             tvType = TVType.SEARCH,
