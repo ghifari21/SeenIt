@@ -1,7 +1,8 @@
-package com.gosty.data.entities
+package com.gosty.data.db.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.datetime.Clock
 
 @Entity(tableName = "tv_watchlist")
 data class TVWatchlistEntity(
@@ -9,4 +10,5 @@ data class TVWatchlistEntity(
     val name: String,
     val overview: String,
     val posterPath: String,
+    val createdAt: Long = Clock.System.now().toEpochMilliseconds()
 )

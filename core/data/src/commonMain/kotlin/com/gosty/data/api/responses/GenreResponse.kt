@@ -1,4 +1,4 @@
-package com.gosty.data.responses
+package com.gosty.data.api.responses
 
 import kotlinx.serialization.Serializable
 

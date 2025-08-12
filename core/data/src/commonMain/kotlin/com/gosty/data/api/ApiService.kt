@@ -1,35 +1,37 @@
-package com.gosty.data.sources
+package com.gosty.data.api
 
-import com.gosty.data.responses.MovieDetailResponse
-import com.gosty.data.responses.MovieListsResponse
-import com.gosty.data.responses.TVDetailResponse
-import com.gosty.data.responses.TVListsResponse
+import com.gosty.data.api.responses.MovieDetailResponse
+import com.gosty.data.api.responses.MovieListsResponse
+import com.gosty.data.api.responses.TVDetailResponse
+import com.gosty.data.api.responses.TVListsResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 
-interface RemoteDataSource {
-    suspend fun fetchNowPlayingMovies(): MovieListsResponse
-    suspend fun fetchPopularMovies(): MovieListsResponse
-    suspend fun fetchTopRatedMovies(): MovieListsResponse
-    suspend fun fetchUpcomingMovies(): MovieListsResponse
+interface ApiService {
+    suspend fun fetchNowPlayingMovies(page: Int?): MovieListsResponse
+    suspend fun fetchPopularMovies(page: Int?): MovieListsResponse
+    suspend fun fetchTopRatedMovies(page: Int?): MovieListsResponse
+    suspend fun fetchUpcomingMovies(page: Int?): MovieListsResponse
     suspend fun fetchMovieDetails(movieId: Int): MovieDetailResponse
-    suspend fun fetchMovieRecommendations(movieId: Int): MovieListsResponse
-    suspend fun searchMovies(query: String): MovieListsResponse
-    suspend fun fetchTVAiringToday(): TVListsResponse
-    suspend fun fetchTVOnTheAir(): TVListsResponse
-    suspend fun fetchTVPopular(): TVListsResponse
-    suspend fun fetchTVTopRated(): TVListsResponse
+    suspend fun fetchMovieRecommendations(movieId: Int, page: Int?): MovieListsResponse
+    suspend fun searchMovies(query: String, page: Int?): MovieListsResponse
+    suspend fun fetchTVAiringToday(page: Int?): TVListsResponse
+    suspend fun fetchTVOnTheAir(page: Int?): TVListsResponse
+    suspend fun fetchTVPopular(page: Int?): TVListsResponse
+    suspend fun fetchTVTopRated(page: Int?): TVListsResponse
     suspend fun fetchTVDetails(tvId: Int): TVDetailResponse
-    suspend fun fetchTVRecommendations(tvId: Int): TVListsResponse
-    suspend fun searchTVShows(query: String): TVListsResponse
+    suspend fun fetchTVRecommendations(tvId: Int, page: Int?): TVListsResponse
+    suspend fun searchTVShows(query: String, page: Int?): TVListsResponse
 }
 
-class RemoteDataSourceImpl(private val client: HttpClient) : RemoteDataSource {
-    override suspend fun fetchNowPlayingMovies(): MovieListsResponse {
+class ApiServiceImpl(private val client: HttpClient) : ApiService {
+    override suspend fun fetchNowPlayingMovies(page: Int?): MovieListsResponse {
         try {
-            val response = client.get("movie/now_playing")
+            val response = client.get("movie/now_playing") {
+                page?.let { parameter("page", it) }
+            }
 
             if (response.status.value == 200) {
                 return response.body()
@@ -41,9 +43,11 @@ class RemoteDataSourceImpl(private val client: HttpClient) : RemoteDataSource {
         }
     }
 
-    override suspend fun fetchPopularMovies(): MovieListsResponse {
+    override suspend fun fetchPopularMovies(page: Int?): MovieListsResponse {
         try {
-            val response = client.get("movie/popular")
+            val response = client.get("movie/popular") {
+                page?.let { parameter("page", it) }
+            }
 
             if (response.status.value == 200) {
                 return response.body()
@@ -55,9 +59,12 @@ class RemoteDataSourceImpl(private val client: HttpClient) : RemoteDataSource {
         }
     }
 
-    override suspend fun fetchTopRatedMovies(): MovieListsResponse {
+    override suspend fun fetchTopRatedMovies(page: Int?): MovieListsResponse {
         try {
-            val response = client.get("movie/top_rated")
+            val response = client.get("movie/top_rated") {
+                page?.let { parameter("page", it) }
+            }
+
             if (response.status.value == 200) {
                 return response.body()
             } else {
@@ -68,9 +75,11 @@ class RemoteDataSourceImpl(private val client: HttpClient) : RemoteDataSource {
         }
     }
 
-    override suspend fun fetchUpcomingMovies(): MovieListsResponse {
+    override suspend fun fetchUpcomingMovies(page: Int?): MovieListsResponse {
         try {
-            val response = client.get("movie/upcoming")
+            val response = client.get("movie/upcoming") {
+                page?.let { parameter("page", it) }
+            }
 
             if (response.status.value == 200) {
                 return response.body()
@@ -96,9 +105,11 @@ class RemoteDataSourceImpl(private val client: HttpClient) : RemoteDataSource {
         }
     }
 
-    override suspend fun fetchMovieRecommendations(movieId: Int): MovieListsResponse {
+    override suspend fun fetchMovieRecommendations(movieId: Int, page: Int?): MovieListsResponse {
         try {
-            val response = client.get("movie/$movieId/recommendations")
+            val response = client.get("movie/$movieId/recommendations") {
+                page?.let { parameter("page", it) }
+            }
 
             if (response.status.value == 200) {
                 return response.body()
@@ -110,10 +121,14 @@ class RemoteDataSourceImpl(private val client: HttpClient) : RemoteDataSource {
         }
     }
 
-    override suspend fun searchMovies(query: String): MovieListsResponse {
+    override suspend fun searchMovies(
+        query: String,
+        page: Int?
+    ): MovieListsResponse {
         try {
             val response = client.get("search/movie") {
                 parameter("query", query)
+                page?.let { parameter("page", it) }
             }
 
             if (response.status.value == 200) {
@@ -126,9 +141,11 @@ class RemoteDataSourceImpl(private val client: HttpClient) : RemoteDataSource {
         }
     }
 
-    override suspend fun fetchTVAiringToday(): TVListsResponse {
+    override suspend fun fetchTVAiringToday(page: Int?): TVListsResponse {
         try {
-            val response = client.get("tv/airing_today")
+            val response = client.get("tv/airing_today") {
+                page?.let { parameter("page", it) }
+            }
 
             if (response.status.value == 200) {
                 return response.body()
@@ -140,9 +157,11 @@ class RemoteDataSourceImpl(private val client: HttpClient) : RemoteDataSource {
         }
     }
 
-    override suspend fun fetchTVOnTheAir(): TVListsResponse {
+    override suspend fun fetchTVOnTheAir(page: Int?): TVListsResponse {
         try {
-            val response = client.get("tv/on_the_air")
+            val response = client.get("tv/on_the_air") {
+                page?.let { parameter("page", it) }
+            }
 
             if (response.status.value == 200) {
                 return response.body()
@@ -154,9 +173,11 @@ class RemoteDataSourceImpl(private val client: HttpClient) : RemoteDataSource {
         }
     }
 
-    override suspend fun fetchTVPopular(): TVListsResponse {
+    override suspend fun fetchTVPopular(page: Int?): TVListsResponse {
         try {
-            val response = client.get("tv/popular")
+            val response = client.get("tv/popular") {
+                page?.let { parameter("page", it) }
+            }
 
             if (response.status.value == 200) {
                 return response.body()
@@ -168,9 +189,11 @@ class RemoteDataSourceImpl(private val client: HttpClient) : RemoteDataSource {
         }
     }
 
-    override suspend fun fetchTVTopRated(): TVListsResponse {
+    override suspend fun fetchTVTopRated(page: Int?): TVListsResponse {
         try {
-            val response = client.get("tv/top_rated")
+            val response = client.get("tv/top_rated") {
+                page?.let { parameter("page", it) }
+            }
 
             if (response.status.value == 200) {
                 return response.body()
@@ -196,9 +219,11 @@ class RemoteDataSourceImpl(private val client: HttpClient) : RemoteDataSource {
         }
     }
 
-    override suspend fun fetchTVRecommendations(tvId: Int): TVListsResponse {
+    override suspend fun fetchTVRecommendations(tvId: Int, page: Int?): TVListsResponse {
         try {
-            val response = client.get("tv/$tvId/recommendations")
+            val response = client.get("tv/$tvId/recommendations") {
+                page?.let { parameter("page", it) }
+            }
 
             if (response.status.value == 200) {
                 return response.body()
@@ -210,10 +235,14 @@ class RemoteDataSourceImpl(private val client: HttpClient) : RemoteDataSource {
         }
     }
 
-    override suspend fun searchTVShows(query: String): TVListsResponse {
+    override suspend fun searchTVShows(
+        query: String,
+        page: Int?
+    ): TVListsResponse {
         try {
             val response = client.get("search/tv") {
                 parameter("query", query)
+                page?.let { parameter("page", it) }
             }
 
             if (response.status.value == 200) {

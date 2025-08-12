@@ -6,8 +6,8 @@ import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import com.gosty.data.db.dao.MovieWatchlistDao
 import com.gosty.data.db.dao.TVWatchlistDao
-import com.gosty.data.entities.MovieWatchlistEntity
-import com.gosty.data.entities.TVWatchlistEntity
+import com.gosty.data.db.entities.MovieWatchlistEntity
+import com.gosty.data.db.entities.TVWatchlistEntity
 
 @Database(
     entities = [

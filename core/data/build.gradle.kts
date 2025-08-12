@@ -1,9 +1,38 @@
+import org.gradle.kotlin.dsl.androidLibrary
+import org.gradle.kotlin.dsl.buildConfig
+import org.gradle.kotlin.dsl.buildConfigField
+import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.invoke
+import org.gradle.kotlin.dsl.kotlin
+import org.gradle.kotlin.dsl.libs
+import org.gradle.kotlin.dsl.projects
+import org.gradle.kotlin.dsl.room
+import org.gradle.kotlin.dsl.sourceSets
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidKotlinMultiplatformLibrary)
     alias(libs.plugins.androidLint)
     alias(libs.plugins.androidx.room)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.buildkonfig)
+}
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.inputStream())
+}
+
+buildConfig {
+    packageName("com.gosty.seenit.config")
+
+    buildConfigField(
+        "String",
+        "API_KEY",
+        "\"${localProperties.getProperty("TMDB_API_KEY")}\""
+    )
 }
 
 room {
@@ -75,6 +104,8 @@ kotlin {
 
                 implementation(libs.androidx.room.runtime)
                 implementation(libs.androidx.sqlite.bundled)
+
+                implementation(libs.androidx.paging.common)
             }
         }
 

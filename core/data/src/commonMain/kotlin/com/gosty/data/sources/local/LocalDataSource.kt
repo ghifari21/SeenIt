@@ -1,9 +1,10 @@
-package com.gosty.data.sources
+package com.gosty.data.sources.local
 
+import androidx.paging.PagingSource
 import com.gosty.data.db.dao.MovieWatchlistDao
 import com.gosty.data.db.dao.TVWatchlistDao
-import com.gosty.data.entities.MovieWatchlistEntity
-import com.gosty.data.entities.TVWatchlistEntity
+import com.gosty.data.db.entities.MovieWatchlistEntity
+import com.gosty.data.db.entities.TVWatchlistEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 
@@ -11,12 +12,12 @@ interface LocalDataSource {
     suspend fun insertMovie(movie: MovieWatchlistEntity)
     suspend fun deleteMovie(movie: MovieWatchlistEntity)
     fun getMovieById(id: Int): Flow<MovieWatchlistEntity?>
-    fun getAllMovies(): Flow<List<MovieWatchlistEntity>>
+    fun getAllMovies(): PagingSource<Int, MovieWatchlistEntity>
     suspend fun isMovieInWatchlist(id: Int): Boolean
     suspend fun insertTV(tv: TVWatchlistEntity)
     suspend fun deleteTV(tv: TVWatchlistEntity)
     fun getTVById(id: Int): Flow<TVWatchlistEntity?>
-    fun getAllTVShows(): Flow<List<TVWatchlistEntity>>
+    fun getAllTVShows(): PagingSource<Int, TVWatchlistEntity>
     suspend fun isTVInWatchlist(id: Int): Boolean
 }
 
@@ -36,8 +37,8 @@ class LocalDataSourceImpl(
         return movieWatchlistDao.getMovieById(id)
     }
 
-    override fun getAllMovies(): Flow<List<MovieWatchlistEntity>> {
-        return movieWatchlistDao.getAllMovies()
+    override fun getAllMovies(): PagingSource<Int, MovieWatchlistEntity> {
+        return MovieWatchlistPagingSource(movieWatchlistDao)
     }
 
     override suspend fun isMovieInWatchlist(id: Int): Boolean {
@@ -56,12 +57,11 @@ class LocalDataSourceImpl(
         return tvWatchlistDao.getTVById(id)
     }
 
-    override fun getAllTVShows(): Flow<List<TVWatchlistEntity>> {
-        return tvWatchlistDao.getAllTVs()
+    override fun getAllTVShows(): PagingSource<Int, TVWatchlistEntity> {
+        return TVWatchlistPagingSource(tvWatchlistDao)
     }
 
     override suspend fun isTVInWatchlist(id: Int): Boolean {
         return getTVById(id).firstOrNull() != null
     }
-
 }
