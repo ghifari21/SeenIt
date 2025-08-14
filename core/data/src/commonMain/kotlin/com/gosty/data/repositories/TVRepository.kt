@@ -18,9 +18,13 @@ import kotlinx.coroutines.flow.map
 
 interface TVRepository {
     fun getAiringTodayTVShows(): Flow<PagingData<TV>>
+    fun getAiringTodayTVShowsPreview(): Flow<Result<List<TV>>>
     fun getOnTheAirTVShows(): Flow<PagingData<TV>>
+    fun getOnTheAirTVShowsPreview(): Flow<Result<List<TV>>>
     fun getPopularTVShows(): Flow<PagingData<TV>>
+    fun getPopularTVShowsPreview(): Flow<Result<List<TV>>>
     fun getTopRatedTVShows(): Flow<PagingData<TV>>
+    fun getTopRatedTVShowsPreview(): Flow<Result<List<TV>>>
     fun getTVDetails(tvId: Int): Flow<Result<TVDetail>>
     fun getTVRecommendations(tvId: Int): Flow<PagingData<TV>>
     fun searchTVShows(query: String): Flow<PagingData<TV>>
@@ -52,6 +56,20 @@ class TVRepositoryImpl(
         }
     }
 
+    override fun getAiringTodayTVShowsPreview(): Flow<Result<List<TV>>> = flow {
+        emit(Result.Loading)
+        try {
+            val tvShows = remoteDataSource.fetchTVAiringTodayPreview().results.map { it.toModel() }
+            if (tvShows.isNotEmpty()) {
+                emit(Result.Success(tvShows))
+            } else {
+                emit(Result.Empty)
+            }
+        } catch (e: Exception) {
+            emit(Result.Error(e.message.toString()))
+        }
+    }
+
     override fun getOnTheAirTVShows(): Flow<PagingData<TV>> {
         return Pager(
             config = PagingConfig(
@@ -63,6 +81,20 @@ class TVRepositoryImpl(
             }
         ).flow.map { responses ->
             responses.map { it.toModel() }
+        }
+    }
+
+    override fun getOnTheAirTVShowsPreview(): Flow<Result<List<TV>>> = flow {
+        emit(Result.Loading)
+        try {
+            val tvShows = remoteDataSource.fetchTVOnTheAirPreview().results.map { it.toModel() }
+            if (tvShows.isNotEmpty()) {
+                emit(Result.Success(tvShows))
+            } else {
+                emit(Result.Empty)
+            }
+        } catch (e: Exception) {
+            emit(Result.Error(e.message.toString()))
         }
     }
 
@@ -80,6 +112,20 @@ class TVRepositoryImpl(
         }
     }
 
+    override fun getPopularTVShowsPreview(): Flow<Result<List<TV>>> = flow {
+        emit(Result.Loading)
+        try {
+            val tvShows = remoteDataSource.fetchTVPopularPreview().results.map { it.toModel() }
+            if (tvShows.isNotEmpty()) {
+                emit(Result.Success(tvShows))
+            } else {
+                emit(Result.Empty)
+            }
+        } catch (e: Exception) {
+            emit(Result.Error(e.message.toString()))
+        }
+    }
+
     override fun getTopRatedTVShows(): Flow<PagingData<TV>> {
         return Pager(
             config = PagingConfig(
@@ -91,6 +137,20 @@ class TVRepositoryImpl(
             }
         ).flow.map { responses ->
             responses.map { it.toModel() }
+        }
+    }
+
+    override fun getTopRatedTVShowsPreview(): Flow<Result<List<TV>>> = flow {
+        emit(Result.Loading)
+        try {
+            val tvShows = remoteDataSource.fetchTVTopRatedPreview().results.map { it.toModel() }
+            if (tvShows.isNotEmpty()) {
+                emit(Result.Success(tvShows))
+            } else {
+                emit(Result.Empty)
+            }
+        } catch (e: Exception) {
+            emit(Result.Error(e.message.toString()))
         }
     }
 

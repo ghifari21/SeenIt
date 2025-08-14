@@ -21,9 +21,13 @@ import kotlinx.coroutines.flow.map
 
 interface MovieRepository {
     fun getNowPlayingMovies(): Flow<PagingData<Movie>>
+    fun getNowPlayingMoviesPreview(): Flow<Result<List<Movie>>>
     fun getPopularMovies(): Flow<PagingData<Movie>>
+    fun getPopularMoviesPreview(): Flow<Result<List<Movie>>>
     fun getTopRatedMovies(): Flow<PagingData<Movie>>
+    fun getTopRatedMoviesPreview(): Flow<Result<List<Movie>>>
     fun getUpcomingMovies(): Flow<PagingData<Movie>>
+    fun getUpcomingMoviesPreview(): Flow<Result<List<Movie>>>
     fun getMovieDetails(movieId: Int): Flow<Result<MovieDetail>>
     fun getMovieRecommendations(movieId: Int): Flow<PagingData<Movie>>
     fun searchMovies(query: String): Flow<PagingData<Movie>>
@@ -55,6 +59,21 @@ class MovieRepositoryImpl(
         }
     }
 
+    override fun getNowPlayingMoviesPreview(): Flow<Result<List<Movie>>> = flow {
+        emit(Result.Loading)
+        try {
+            val movies =
+                remoteDataSource.fetchNowPlayingMoviesPreview().results.map { it.toModel() }
+            if (movies.isNotEmpty()) {
+                emit(Result.Success(movies))
+            } else {
+                emit(Result.Empty)
+            }
+        } catch (e: Exception) {
+            emit(Result.Error(e.message.toString()))
+        }
+    }
+
     override fun getPopularMovies(): Flow<PagingData<Movie>> {
         return Pager(
             config = PagingConfig(
@@ -66,6 +85,21 @@ class MovieRepositoryImpl(
             }
         ).flow.map { responses ->
             responses.map { it.toModel() }
+        }
+    }
+
+    override fun getPopularMoviesPreview(): Flow<Result<List<Movie>>> = flow {
+        emit(Result.Loading)
+        try {
+            val movies =
+                remoteDataSource.fetchPopularMoviesPreview().results.map { it.toModel() }
+            if (movies.isNotEmpty()) {
+                emit(Result.Success(movies))
+            } else {
+                emit(Result.Empty)
+            }
+        } catch (e: Exception) {
+            emit(Result.Error(e.message.toString()))
         }
     }
 
@@ -83,6 +117,21 @@ class MovieRepositoryImpl(
         }
     }
 
+    override fun getTopRatedMoviesPreview(): Flow<Result<List<Movie>>> = flow {
+        emit(Result.Loading)
+        try {
+            val movies =
+                remoteDataSource.fetchTopRatedMoviesPreview().results.map { it.toModel() }
+            if (movies.isNotEmpty()) {
+                emit(Result.Success(movies))
+            } else {
+                emit(Result.Empty)
+            }
+        } catch (e: Exception) {
+            emit(Result.Error(e.message.toString()))
+        }
+    }
+
     override fun getUpcomingMovies(): Flow<PagingData<Movie>> {
         return Pager(
             config = PagingConfig(
@@ -94,6 +143,21 @@ class MovieRepositoryImpl(
             }
         ).flow.map { responses ->
             responses.map { it.toModel() }
+        }
+    }
+
+    override fun getUpcomingMoviesPreview(): Flow<Result<List<Movie>>> = flow {
+        emit(Result.Loading)
+        try {
+            val movies =
+                remoteDataSource.fetchUpcomingMoviesPreview().results.map { it.toModel() }
+            if (movies.isNotEmpty()) {
+                emit(Result.Success(movies))
+            } else {
+                emit(Result.Empty)
+            }
+        } catch (e: Exception) {
+            emit(Result.Error(e.message.toString()))
         }
     }
 
