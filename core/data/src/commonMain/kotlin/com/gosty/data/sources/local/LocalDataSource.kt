@@ -9,13 +9,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 
 interface LocalDataSource {
-    suspend fun insertMovie(movie: MovieWatchlistEntity)
-    suspend fun deleteMovie(movie: MovieWatchlistEntity)
+    suspend fun insertMovie(movie: MovieWatchlistEntity): String
+    suspend fun deleteMovie(movie: MovieWatchlistEntity): String
     fun getMovieById(id: Int): Flow<MovieWatchlistEntity?>
     fun getAllMovies(): PagingSource<Int, MovieWatchlistEntity>
     suspend fun isMovieInWatchlist(id: Int): Boolean
-    suspend fun insertTV(tv: TVWatchlistEntity)
-    suspend fun deleteTV(tv: TVWatchlistEntity)
+    suspend fun insertTV(tv: TVWatchlistEntity): String
+    suspend fun deleteTV(tv: TVWatchlistEntity): String
     fun getTVById(id: Int): Flow<TVWatchlistEntity?>
     fun getAllTVShows(): PagingSource<Int, TVWatchlistEntity>
     suspend fun isTVInWatchlist(id: Int): Boolean
@@ -25,12 +25,14 @@ class LocalDataSourceImpl(
     private val movieWatchlistDao: MovieWatchlistDao,
     private val tvWatchlistDao: TVWatchlistDao
 ) : LocalDataSource {
-    override suspend fun insertMovie(movie: MovieWatchlistEntity) {
+    override suspend fun insertMovie(movie: MovieWatchlistEntity): String {
         movieWatchlistDao.insertMovie(movie)
+        return "Movie added to watchlist"
     }
 
-    override suspend fun deleteMovie(movie: MovieWatchlistEntity) {
+    override suspend fun deleteMovie(movie: MovieWatchlistEntity): String {
         movieWatchlistDao.deleteMovie(movie)
+        return "Movie removed from watchlist"
     }
 
     override fun getMovieById(id: Int): Flow<MovieWatchlistEntity?> {
@@ -45,12 +47,14 @@ class LocalDataSourceImpl(
         return getMovieById(id).firstOrNull() != null
     }
 
-    override suspend fun insertTV(tv: TVWatchlistEntity) {
+    override suspend fun insertTV(tv: TVWatchlistEntity): String {
         tvWatchlistDao.insertTV(tv)
+        return "TV show added to watchlist"
     }
 
-    override suspend fun deleteTV(tv: TVWatchlistEntity) {
+    override suspend fun deleteTV(tv: TVWatchlistEntity): String {
         tvWatchlistDao.deleteTV(tv)
+        return "TV show removed from watchlist"
     }
 
     override fun getTVById(id: Int): Flow<TVWatchlistEntity?> {

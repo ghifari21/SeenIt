@@ -109,7 +109,7 @@ data class TVEpisodeToAirResponse(
     val overview: String,
 
     @SerialName("vote_average")
-    val voteAverage: Long,
+    val voteAverage: Double,
 
     @SerialName("vote_count")
     val voteCount: Long,

@@ -5,6 +5,12 @@ import com.gosty.data.api.ApiService
 import com.gosty.data.api.ApiServiceImpl
 import com.gosty.data.db.SeenItDatabase
 import com.gosty.data.db.getRoomDatabase
+import com.gosty.data.repositories.MovieRepository
+import com.gosty.data.repositories.MovieRepositoryImpl
+import com.gosty.data.repositories.TVRepository
+import com.gosty.data.repositories.TVRepositoryImpl
+import com.gosty.data.sources.local.LocalDataSource
+import com.gosty.data.sources.local.LocalDataSourceImpl
 import com.gosty.data.sources.remote.RemoteDataSource
 import com.gosty.data.sources.remote.RemoteDataSourceImpl
 import com.gosty.seenit.config.BuildConfig
@@ -26,6 +32,7 @@ val databaseModule = module {
     single<SeenItDatabase> { getRoomDatabase(get()) }
     single { get<SeenItDatabase>().movieWatchlistDao() }
     single { get<SeenItDatabase>().tvWatchlistDao() }
+    single<LocalDataSource> { LocalDataSourceImpl(get(), get()) }
 }
 
 val networkModule = module {
@@ -51,7 +58,11 @@ val networkModule = module {
             }
         }
     }
-
     single<ApiService> { ApiServiceImpl(get()) }
     single<RemoteDataSource> { RemoteDataSourceImpl(get()) }
+}
+
+val repositoryModule = module {
+    single<MovieRepository> { MovieRepositoryImpl(get(), get()) }
+    single<TVRepository> { TVRepositoryImpl(get(), get()) }
 }
