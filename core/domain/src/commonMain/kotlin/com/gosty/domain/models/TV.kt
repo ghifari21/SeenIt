@@ -1,4 +1,4 @@
-package com.gosty.common.models
+package com.gosty.domain.models
 
 data class TV(
     val adult: Boolean,

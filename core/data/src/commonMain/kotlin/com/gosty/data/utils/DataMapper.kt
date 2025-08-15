@@ -1,20 +1,5 @@
 package com.gosty.data.utils
 
-import com.gosty.common.models.BelongsToCollection
-import com.gosty.common.models.CreatedBy
-import com.gosty.common.models.Genre
-import com.gosty.common.models.Movie
-import com.gosty.common.models.MovieDetail
-import com.gosty.common.models.MovieWatchlist
-import com.gosty.common.models.Network
-import com.gosty.common.models.ProductionCompany
-import com.gosty.common.models.ProductionCountry
-import com.gosty.common.models.Season
-import com.gosty.common.models.SpokenLanguage
-import com.gosty.common.models.TV
-import com.gosty.common.models.TVDetail
-import com.gosty.common.models.TVEpisodeToAir
-import com.gosty.common.models.TVWatchlist
 import com.gosty.data.api.responses.BelongsToCollectionResponse
 import com.gosty.data.api.responses.CreatedByResponse
 import com.gosty.data.api.responses.GenreResponse
@@ -30,6 +15,21 @@ import com.gosty.data.api.responses.TVEpisodeToAirResponse
 import com.gosty.data.api.responses.TVListsResult
 import com.gosty.data.db.entities.MovieWatchlistEntity
 import com.gosty.data.db.entities.TVWatchlistEntity
+import com.gosty.domain.models.BelongsToCollection
+import com.gosty.domain.models.CreatedBy
+import com.gosty.domain.models.Genre
+import com.gosty.domain.models.Movie
+import com.gosty.domain.models.MovieDetail
+import com.gosty.domain.models.MovieWatchlist
+import com.gosty.domain.models.Network
+import com.gosty.domain.models.ProductionCompany
+import com.gosty.domain.models.ProductionCountry
+import com.gosty.domain.models.Season
+import com.gosty.domain.models.SpokenLanguage
+import com.gosty.domain.models.TV
+import com.gosty.domain.models.TVDetail
+import com.gosty.domain.models.TVEpisodeToAir
+import com.gosty.domain.models.TVWatchlist
 
 fun MovieListsResult.toModel(): Movie {
     return Movie(

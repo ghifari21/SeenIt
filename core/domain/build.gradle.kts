@@ -1,32 +1,7 @@
-import java.util.Properties
-
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidKotlinMultiplatformLibrary)
     alias(libs.plugins.androidLint)
-    alias(libs.plugins.androidx.room)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.buildkonfig)
-}
-
-val localProperties = Properties()
-val localPropertiesFile = rootProject.file("local.properties")
-if (localPropertiesFile.exists()) {
-    localProperties.load(localPropertiesFile.inputStream())
-}
-
-buildConfig {
-    packageName("com.gosty.seenit.config")
-
-    buildConfigField(
-        "String",
-        "API_KEY",
-        "\"${localProperties.getProperty("TMDB_API_KEY")}\""
-    )
-}
-
-room {
-    schemaDirectory("$projectDir/schemas")
 }
 
 kotlin {
@@ -35,7 +10,7 @@ kotlin {
     // which platforms this KMP module supports.
     // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
     androidLibrary {
-        namespace = "com.gosty.data"
+        namespace = "com.gosty.domain"
         compileSdk = 36
         minSdk = 24
 
@@ -56,7 +31,7 @@ kotlin {
     // A step-by-step guide on how to include this library in an XCode
     // project can be found here:
     // https://developer.android.com/kotlin/multiplatform/migrate
-    val xcfName = "core:dataKit"
+    val xcfName = "core:domainKit"
 
     iosX64 {
         binaries.framework {
@@ -85,19 +60,11 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.kotlin.stdlib)
-                implementation(libs.ktor.client.core)
-                implementation(libs.ktor.client.content.negotiation)
-                implementation(libs.ktor.serialization.kotlinx.json)
-                implementation(libs.ktor.client.auth)
                 implementation(libs.koin.core)
-
-                implementation(libs.androidx.room.runtime)
-                implementation(libs.androidx.sqlite.bundled)
-
                 implementation(libs.androidx.paging.common)
-
+                
                 implementation(projects.core.common)
-                implementation(projects.core.domain)
+                implementation(projects.core.data)
             }
         }
 
@@ -109,7 +76,9 @@ kotlin {
 
         androidMain {
             dependencies {
-                implementation(libs.ktor.client.okhttp)
+                // Add Android-specific dependencies here. Note that this source set depends on
+                // commonMain by default and will correctly pull the Android artifacts of any KMP
+                // dependencies declared in commonMain.
             }
         }
 
@@ -123,17 +92,13 @@ kotlin {
 
         iosMain {
             dependencies {
-                implementation(libs.ktor.client.darwin)
+                // Add iOS-specific dependencies here. This a source set created by Kotlin Gradle
+                // Plugin (KGP) that each specific iOS target (e.g., iosX64) depends on as
+                // part of KMP’s default source set hierarchy. Note that this source set depends
+                // on common by default and will correctly pull the iOS artifacts of any
+                // KMP dependencies declared in commonMain.
             }
         }
     }
 
-}
-
-dependencies {
-    add("kspCommonMainMetadata", libs.androidx.room.compiler)
-    add("kspAndroid", libs.androidx.room.compiler)
-    add("kspIosX64", libs.androidx.room.compiler)
-    add("kspIosArm64", libs.androidx.room.compiler)
-    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
 }

@@ -20,6 +20,7 @@ interface RemoteDataSource {
     suspend fun fetchUpcomingMoviesPreview(): MovieListsResponse
     suspend fun fetchMovieDetails(movieId: Int): MovieDetailResponse
     fun fetchMovieRecommendations(movieId: Int): PagingSource<Int, MovieListsResult>
+    suspend fun fetchMovieRecommendationsPreview(movieId: Int): MovieListsResponse
     fun searchMovies(query: String): PagingSource<Int, MovieListsResult>
     fun fetchTVAiringToday(): PagingSource<Int, TVListsResult>
     suspend fun fetchTVAiringTodayPreview(): TVListsResponse
@@ -31,6 +32,7 @@ interface RemoteDataSource {
     suspend fun fetchTVTopRatedPreview(): TVListsResponse
     suspend fun fetchTVDetails(tvId: Int): TVDetailResponse
     fun fetchTVRecommendations(tvId: Int): PagingSource<Int, TVListsResult>
+    suspend fun fetchTVRecommendationsPreview(tvId: Int): TVListsResponse
     fun searchTVShows(query: String): PagingSource<Int, TVListsResult>
 }
 
@@ -89,6 +91,10 @@ class RemoteDataSourceImpl(private val apiService: ApiService) : RemoteDataSourc
             movieType = MovieType.RECOMMENDATIONS,
             id = movieId
         )
+    }
+
+    override suspend fun fetchMovieRecommendationsPreview(movieId: Int): MovieListsResponse {
+        return apiService.fetchMovieRecommendations(movieId = movieId, page = null)
     }
 
     override fun searchMovies(query: String): PagingSource<Int, MovieListsResult> {
@@ -153,6 +159,10 @@ class RemoteDataSourceImpl(private val apiService: ApiService) : RemoteDataSourc
             tvType = TVType.RECOMMENDATIONS,
             id = tvId
         )
+    }
+
+    override suspend fun fetchTVRecommendationsPreview(tvId: Int): TVListsResponse {
+        return apiService.fetchTVRecommendations(tvId = tvId, page = null)
     }
 
     override fun searchTVShows(query: String): PagingSource<Int, TVListsResult> {

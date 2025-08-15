@@ -4,14 +4,14 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
-import com.gosty.common.models.TV
-import com.gosty.common.models.TVDetail
-import com.gosty.common.models.TVWatchlist
 import com.gosty.common.utils.Result
 import com.gosty.data.sources.local.LocalDataSource
 import com.gosty.data.sources.remote.RemoteDataSource
 import com.gosty.data.utils.toEntity
 import com.gosty.data.utils.toModel
+import com.gosty.domain.models.TV
+import com.gosty.domain.models.TVDetail
+import com.gosty.domain.models.TVWatchlist
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
@@ -27,6 +27,7 @@ interface TVRepository {
     fun getTopRatedTVShowsPreview(): Flow<Result<List<TV>>>
     fun getTVDetails(tvId: Int): Flow<Result<TVDetail>>
     fun getTVRecommendations(tvId: Int): Flow<PagingData<TV>>
+    fun getTVRecommendationsPreview(tvId: Int): Flow<Result<List<TV>>>
     fun searchTVShows(query: String): Flow<PagingData<TV>>
     fun addTVToWatchlist(tv: TV): Flow<String>
     fun addTVToWatchlist(tv: TVDetail): Flow<String>
@@ -175,6 +176,21 @@ class TVRepositoryImpl(
             }
         ).flow.map { responses ->
             responses.map { it.toModel() }
+        }
+    }
+
+    override fun getTVRecommendationsPreview(tvId: Int): Flow<Result<List<TV>>> = flow {
+        emit(Result.Loading)
+        try {
+            val tvShows =
+                remoteDataSource.fetchTVRecommendationsPreview(tvId).results.map { it.toModel() }
+            if (tvShows.isNotEmpty()) {
+                emit(Result.Success(tvShows))
+            } else {
+                emit(Result.Empty)
+            }
+        } catch (e: Exception) {
+            emit(Result.Error(e.message.toString()))
         }
     }
 

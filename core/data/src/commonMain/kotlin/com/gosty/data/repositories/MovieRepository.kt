@@ -4,14 +4,14 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
-import com.gosty.common.models.Movie
-import com.gosty.common.models.MovieDetail
-import com.gosty.common.models.MovieWatchlist
 import com.gosty.common.utils.Result
 import com.gosty.data.sources.local.LocalDataSource
 import com.gosty.data.sources.remote.RemoteDataSource
 import com.gosty.data.utils.toEntity
 import com.gosty.data.utils.toModel
+import com.gosty.domain.models.Movie
+import com.gosty.domain.models.MovieDetail
+import com.gosty.domain.models.MovieWatchlist
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
@@ -30,6 +30,7 @@ interface MovieRepository {
     fun getUpcomingMoviesPreview(): Flow<Result<List<Movie>>>
     fun getMovieDetails(movieId: Int): Flow<Result<MovieDetail>>
     fun getMovieRecommendations(movieId: Int): Flow<PagingData<Movie>>
+    fun getMovieRecommendationsPreview(movieId: Int): Flow<Result<List<Movie>>>
     fun searchMovies(query: String): Flow<PagingData<Movie>>
     fun addMovieToWatchlist(movie: Movie): Flow<String>
     fun addMovieToWatchlist(movie: MovieDetail): Flow<String>
@@ -182,6 +183,21 @@ class MovieRepositoryImpl(
             }
         ).flow.map { responses ->
             responses.map { it.toModel() }
+        }
+    }
+
+    override fun getMovieRecommendationsPreview(movieId: Int): Flow<Result<List<Movie>>> = flow {
+        emit(Result.Loading)
+        try {
+            val movies =
+                remoteDataSource.fetchMovieRecommendationsPreview(movieId).results.map { it.toModel() }
+            if (movies.isNotEmpty()) {
+                emit(Result.Success(movies))
+            } else {
+                emit(Result.Empty)
+            }
+        } catch (e: Exception) {
+            emit(Result.Error(e.message.toString()))
         }
     }
 
