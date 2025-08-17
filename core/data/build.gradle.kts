@@ -85,6 +85,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.kotlin.stdlib)
+                implementation(libs.kotlinx.datetime)
                 implementation(libs.ktor.client.core)
                 implementation(libs.ktor.client.content.negotiation)
                 implementation(libs.ktor.serialization.kotlinx.json)
@@ -97,7 +98,6 @@ kotlin {
                 implementation(libs.androidx.paging.common)
 
                 implementation(projects.core.common)
-                implementation(projects.core.domain)
             }
         }
 

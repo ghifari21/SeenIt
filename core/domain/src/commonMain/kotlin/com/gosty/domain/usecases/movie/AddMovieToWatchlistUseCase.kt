@@ -1,18 +1,17 @@
 package com.gosty.domain.usecases.movie
 
+import com.gosty.common.models.Movie
+import com.gosty.common.models.MovieDetail
+import com.gosty.common.models.MovieWatchlist
 import com.gosty.data.repositories.MovieRepository
-import com.gosty.domain.models.Movie
-import com.gosty.domain.models.MovieDetail
-import com.gosty.domain.models.MovieWatchlist
-import kotlinx.coroutines.flow.Flow
 
 class AddMovieToWatchlistUseCase(private val movieRepository: MovieRepository) {
-    operator fun invoke(movie: Movie): Flow<String> =
+    suspend operator fun invoke(movie: Movie) =
         movieRepository.addMovieToWatchlist(movie)
 
-    operator fun invoke(movie: MovieDetail): Flow<String> =
+    suspend operator fun invoke(movie: MovieDetail) =
         movieRepository.addMovieToWatchlist(movie)
 
-    operator fun invoke(movie: MovieWatchlist): Flow<String> =
+    suspend operator fun invoke(movie: MovieWatchlist) =
         movieRepository.addMovieToWatchlist(movie)
 }

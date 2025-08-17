@@ -2,6 +2,9 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidKotlinMultiplatformLibrary)
     alias(libs.plugins.androidLint)
+    alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlinxSerialization)
 }
 
 kotlin {
@@ -60,7 +63,23 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.kotlin.stdlib)
-                // Add KMP dependencies here
+                implementation(compose.runtime)
+                implementation(compose.foundation)
+                implementation(compose.material3)
+                implementation(compose.ui)
+                implementation(compose.components.resources)
+                implementation(compose.components.uiToolingPreview)
+
+                implementation(libs.coil.compose)
+                implementation(libs.coil.network.ktor)
+
+                implementation(libs.navigation.compose)
+                implementation(libs.lifecycle.runtime.compose)
+                implementation(libs.material.icons.core)
+                implementation(libs.material.icons.extended)
+
+                implementation(projects.core.common)
+                implementation(projects.core.domain)
             }
         }
 

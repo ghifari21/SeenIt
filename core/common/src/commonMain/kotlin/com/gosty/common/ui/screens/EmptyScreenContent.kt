@@ -1,4 +1,4 @@
-package com.jetbrains.kmpapp.screens
+package com.gosty.common.ui.screens
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.Text
@@ -7,8 +7,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.stringResource
-import seenit.composeapp.generated.resources.Res
-import seenit.composeapp.generated.resources.no_data_available
+import seenit.core.common.generated.resources.Res
+import seenit.core.common.generated.resources.no_data_available
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable

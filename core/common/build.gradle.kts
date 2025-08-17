@@ -70,9 +70,13 @@ kotlin {
                 implementation(compose.components.resources)
                 implementation(compose.components.uiToolingPreview)
 
+                implementation(libs.coil.compose)
+                implementation(libs.coil.network.ktor)
+
                 implementation(libs.navigation.compose)
                 implementation(libs.lifecycle.runtime.compose)
                 implementation(libs.material.icons.core)
+                implementation(libs.material.icons.extended)
             }
         }
 

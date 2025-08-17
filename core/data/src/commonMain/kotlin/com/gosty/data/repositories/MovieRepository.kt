@@ -4,14 +4,13 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
-import com.gosty.common.utils.Result
+import com.gosty.common.models.Movie
+import com.gosty.common.models.MovieDetail
+import com.gosty.common.models.MovieWatchlist
 import com.gosty.data.sources.local.LocalDataSource
 import com.gosty.data.sources.remote.RemoteDataSource
 import com.gosty.data.utils.toEntity
 import com.gosty.data.utils.toModel
-import com.gosty.domain.models.Movie
-import com.gosty.domain.models.MovieDetail
-import com.gosty.domain.models.MovieWatchlist
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
@@ -21,23 +20,23 @@ import kotlinx.coroutines.flow.map
 
 interface MovieRepository {
     fun getNowPlayingMovies(): Flow<PagingData<Movie>>
-    fun getNowPlayingMoviesPreview(): Flow<Result<List<Movie>>>
+    suspend fun getNowPlayingMoviesPreview(): List<Movie>
     fun getPopularMovies(): Flow<PagingData<Movie>>
-    fun getPopularMoviesPreview(): Flow<Result<List<Movie>>>
+    suspend fun getPopularMoviesPreview(): List<Movie>
     fun getTopRatedMovies(): Flow<PagingData<Movie>>
-    fun getTopRatedMoviesPreview(): Flow<Result<List<Movie>>>
+    suspend fun getTopRatedMoviesPreview(): List<Movie>
     fun getUpcomingMovies(): Flow<PagingData<Movie>>
-    fun getUpcomingMoviesPreview(): Flow<Result<List<Movie>>>
-    fun getMovieDetails(movieId: Int): Flow<Result<MovieDetail>>
+    suspend fun getUpcomingMoviesPreview(): List<Movie>
+    suspend fun getMovieDetails(movieId: Int): MovieDetail
     fun getMovieRecommendations(movieId: Int): Flow<PagingData<Movie>>
-    fun getMovieRecommendationsPreview(movieId: Int): Flow<Result<List<Movie>>>
+    suspend fun getMovieRecommendationsPreview(movieId: Int): List<Movie>
     fun searchMovies(query: String): Flow<PagingData<Movie>>
-    fun addMovieToWatchlist(movie: Movie): Flow<String>
-    fun addMovieToWatchlist(movie: MovieDetail): Flow<String>
-    fun addMovieToWatchlist(movie: MovieWatchlist): Flow<String>
-    fun removeMovieFromWatchlist(movie: Movie): Flow<String>
-    fun removeMovieFromWatchlist(movie: MovieDetail): Flow<String>
-    fun removeMovieFromWatchlist(movie: MovieWatchlist): Flow<String>
+    suspend fun addMovieToWatchlist(movie: Movie)
+    suspend fun addMovieToWatchlist(movie: MovieDetail)
+    suspend fun addMovieToWatchlist(movie: MovieWatchlist)
+    suspend fun removeMovieFromWatchlist(movie: Movie)
+    suspend fun removeMovieFromWatchlist(movie: MovieDetail)
+    suspend fun removeMovieFromWatchlist(movie: MovieWatchlist)
     fun getMovieWatchlist(): Flow<PagingData<MovieWatchlist>>
     fun isMovieInWatchlist(movieId: Int): Flow<Boolean>
 }
@@ -57,22 +56,11 @@ class MovieRepositoryImpl(
             }
         ).flow.map { responses ->
             responses.map { it.toModel() }
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
-    override fun getNowPlayingMoviesPreview(): Flow<Result<List<Movie>>> = flow {
-        emit(Result.Loading)
-        try {
-            val movies =
-                remoteDataSource.fetchNowPlayingMoviesPreview().results.map { it.toModel() }
-            if (movies.isNotEmpty()) {
-                emit(Result.Success(movies))
-            } else {
-                emit(Result.Empty)
-            }
-        } catch (e: Exception) {
-            emit(Result.Error(e.message.toString()))
-        }
+    override suspend fun getNowPlayingMoviesPreview(): List<Movie> {
+        return remoteDataSource.fetchNowPlayingMoviesPreview().results.map { it.toModel() }
     }
 
     override fun getPopularMovies(): Flow<PagingData<Movie>> {
@@ -86,22 +74,11 @@ class MovieRepositoryImpl(
             }
         ).flow.map { responses ->
             responses.map { it.toModel() }
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
-    override fun getPopularMoviesPreview(): Flow<Result<List<Movie>>> = flow {
-        emit(Result.Loading)
-        try {
-            val movies =
-                remoteDataSource.fetchPopularMoviesPreview().results.map { it.toModel() }
-            if (movies.isNotEmpty()) {
-                emit(Result.Success(movies))
-            } else {
-                emit(Result.Empty)
-            }
-        } catch (e: Exception) {
-            emit(Result.Error(e.message.toString()))
-        }
+    override suspend fun getPopularMoviesPreview(): List<Movie> {
+        return remoteDataSource.fetchPopularMoviesPreview().results.map { it.toModel() }
     }
 
     override fun getTopRatedMovies(): Flow<PagingData<Movie>> {
@@ -115,22 +92,11 @@ class MovieRepositoryImpl(
             }
         ).flow.map { responses ->
             responses.map { it.toModel() }
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
-    override fun getTopRatedMoviesPreview(): Flow<Result<List<Movie>>> = flow {
-        emit(Result.Loading)
-        try {
-            val movies =
-                remoteDataSource.fetchTopRatedMoviesPreview().results.map { it.toModel() }
-            if (movies.isNotEmpty()) {
-                emit(Result.Success(movies))
-            } else {
-                emit(Result.Empty)
-            }
-        } catch (e: Exception) {
-            emit(Result.Error(e.message.toString()))
-        }
+    override suspend fun getTopRatedMoviesPreview(): List<Movie> {
+        return remoteDataSource.fetchTopRatedMoviesPreview().results.map { it.toModel() }
     }
 
     override fun getUpcomingMovies(): Flow<PagingData<Movie>> {
@@ -144,33 +110,16 @@ class MovieRepositoryImpl(
             }
         ).flow.map { responses ->
             responses.map { it.toModel() }
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
-    override fun getUpcomingMoviesPreview(): Flow<Result<List<Movie>>> = flow {
-        emit(Result.Loading)
-        try {
-            val movies =
-                remoteDataSource.fetchUpcomingMoviesPreview().results.map { it.toModel() }
-            if (movies.isNotEmpty()) {
-                emit(Result.Success(movies))
-            } else {
-                emit(Result.Empty)
-            }
-        } catch (e: Exception) {
-            emit(Result.Error(e.message.toString()))
-        }
+    override suspend fun getUpcomingMoviesPreview(): List<Movie> {
+        return remoteDataSource.fetchUpcomingMoviesPreview().results.map { it.toModel() }
     }
 
-    override fun getMovieDetails(movieId: Int): Flow<Result<MovieDetail>> = flow {
-        emit(Result.Loading)
-        try {
-            val movie = remoteDataSource.fetchMovieDetails(movieId).toModel()
-            emit(Result.Success(movie))
-        } catch (e: Exception) {
-            emit(Result.Error(e.message.toString()))
-        }
-    }.flowOn(Dispatchers.IO)
+    override suspend fun getMovieDetails(movieId: Int): MovieDetail {
+        return remoteDataSource.fetchMovieDetails(movieId).toModel()
+    }
 
     override fun getMovieRecommendations(movieId: Int): Flow<PagingData<Movie>> {
         return Pager(
@@ -183,22 +132,11 @@ class MovieRepositoryImpl(
             }
         ).flow.map { responses ->
             responses.map { it.toModel() }
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
-    override fun getMovieRecommendationsPreview(movieId: Int): Flow<Result<List<Movie>>> = flow {
-        emit(Result.Loading)
-        try {
-            val movies =
-                remoteDataSource.fetchMovieRecommendationsPreview(movieId).results.map { it.toModel() }
-            if (movies.isNotEmpty()) {
-                emit(Result.Success(movies))
-            } else {
-                emit(Result.Empty)
-            }
-        } catch (e: Exception) {
-            emit(Result.Error(e.message.toString()))
-        }
+    override suspend fun getMovieRecommendationsPreview(movieId: Int): List<Movie> {
+        return remoteDataSource.fetchMovieRecommendationsPreview(movieId).results.map { it.toModel() }
     }
 
     override fun searchMovies(query: String): Flow<PagingData<Movie>> {
@@ -212,61 +150,31 @@ class MovieRepositoryImpl(
             }
         ).flow.map { responses ->
             responses.map { it.toModel() }
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
-    override fun addMovieToWatchlist(movie: Movie): Flow<String> = flow {
-        try {
-            val result = localDataSource.insertMovie(movie.toEntity())
-            emit(result)
-        } catch (e: Exception) {
-            emit("Error adding movie to watchlist: ${e.message}")
-        }
-    }.flowOn(Dispatchers.IO)
-
-    override fun addMovieToWatchlist(movie: MovieDetail): Flow<String> = flow {
-        try {
-            val result = localDataSource.insertMovie(movie.toEntity())
-            emit(result)
-        } catch (e: Exception) {
-            emit("Error adding movie to watchlist: ${e.message}")
-        }
-    }.flowOn(Dispatchers.IO)
-
-    override fun addMovieToWatchlist(movie: MovieWatchlist): Flow<String> = flow {
-        try {
-            val result = localDataSource.insertMovie(movie.toEntity())
-            emit(result)
-        } catch (e: Exception) {
-            emit("Error adding movie to watchlist: ${e.message}")
-        }
-    }.flowOn(Dispatchers.IO)
-
-    override fun removeMovieFromWatchlist(movie: Movie): Flow<String> = flow {
-        try {
-            val result = localDataSource.deleteMovie(movie.toEntity())
-            emit(result)
-        } catch (e: Exception) {
-            emit("Error removing movie from watchlist: ${e.message}")
-        }
+    override suspend fun addMovieToWatchlist(movie: Movie) {
+        localDataSource.insertMovie(movie.toEntity())
     }
 
-    override fun removeMovieFromWatchlist(movie: MovieDetail): Flow<String> = flow {
-        try {
-            val result = localDataSource.deleteMovie(movie.toEntity())
-            emit(result)
-        } catch (e: Exception) {
-            emit("Error removing movie from watchlist: ${e.message}")
-        }
+    override suspend fun addMovieToWatchlist(movie: MovieDetail) {
+        localDataSource.insertMovie(movie.toEntity())
     }
 
-    override fun removeMovieFromWatchlist(movie: MovieWatchlist): Flow<String> = flow {
-        try {
-            val result = localDataSource.deleteMovie(movie.toEntity())
-            emit(result)
-        } catch (e: Exception) {
-            emit("Error removing movie from watchlist: ${e.message}")
-        }
+    override suspend fun addMovieToWatchlist(movie: MovieWatchlist) {
+        localDataSource.insertMovie(movie.toEntity())
+    }
+
+    override suspend fun removeMovieFromWatchlist(movie: Movie) {
+        localDataSource.insertMovie(movie.toEntity())
+    }
+
+    override suspend fun removeMovieFromWatchlist(movie: MovieDetail) {
+        localDataSource.insertMovie(movie.toEntity())
+    }
+
+    override suspend fun removeMovieFromWatchlist(movie: MovieWatchlist) {
+        localDataSource.insertMovie(movie.toEntity())
     }
 
     override fun getMovieWatchlist(): Flow<PagingData<MovieWatchlist>> {
@@ -278,9 +186,9 @@ class MovieRepositoryImpl(
             pagingSourceFactory = {
                 localDataSource.getAllMovies()
             }
-        ).flow.map { responses ->
-            responses.map { it.toModel() }
-        }
+        ).flow.map { entities ->
+            entities.map { it.toModel() }
+        }.flowOn(Dispatchers.IO)
     }
 
     override fun isMovieInWatchlist(movieId: Int): Flow<Boolean> = flow {
@@ -290,5 +198,5 @@ class MovieRepositoryImpl(
         } catch (e: Exception) {
             emit(false)
         }
-    }
+    }.flowOn(Dispatchers.IO)
 }

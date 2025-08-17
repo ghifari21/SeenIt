@@ -4,37 +4,39 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
-import com.gosty.common.utils.Result
+import com.gosty.common.models.TV
+import com.gosty.common.models.TVDetail
+import com.gosty.common.models.TVWatchlist
 import com.gosty.data.sources.local.LocalDataSource
 import com.gosty.data.sources.remote.RemoteDataSource
 import com.gosty.data.utils.toEntity
 import com.gosty.data.utils.toModel
-import com.gosty.domain.models.TV
-import com.gosty.domain.models.TVDetail
-import com.gosty.domain.models.TVWatchlist
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
 interface TVRepository {
     fun getAiringTodayTVShows(): Flow<PagingData<TV>>
-    fun getAiringTodayTVShowsPreview(): Flow<Result<List<TV>>>
+    suspend fun getAiringTodayTVShowsPreview(): List<TV>
     fun getOnTheAirTVShows(): Flow<PagingData<TV>>
-    fun getOnTheAirTVShowsPreview(): Flow<Result<List<TV>>>
+    suspend fun getOnTheAirTVShowsPreview(): List<TV>
     fun getPopularTVShows(): Flow<PagingData<TV>>
-    fun getPopularTVShowsPreview(): Flow<Result<List<TV>>>
+    suspend fun getPopularTVShowsPreview(): List<TV>
     fun getTopRatedTVShows(): Flow<PagingData<TV>>
-    fun getTopRatedTVShowsPreview(): Flow<Result<List<TV>>>
-    fun getTVDetails(tvId: Int): Flow<Result<TVDetail>>
+    suspend fun getTopRatedTVShowsPreview(): List<TV>
+    suspend fun getTVDetails(tvId: Int): TVDetail
     fun getTVRecommendations(tvId: Int): Flow<PagingData<TV>>
-    fun getTVRecommendationsPreview(tvId: Int): Flow<Result<List<TV>>>
+    suspend fun getTVRecommendationsPreview(tvId: Int): List<TV>
     fun searchTVShows(query: String): Flow<PagingData<TV>>
-    fun addTVToWatchlist(tv: TV): Flow<String>
-    fun addTVToWatchlist(tv: TVDetail): Flow<String>
-    fun addTVToWatchlist(tv: TVWatchlist): Flow<String>
-    fun removeTVFromWatchlist(tv: TV): Flow<String>
-    fun removeTVFromWatchlist(tv: TVDetail): Flow<String>
-    fun removeTVFromWatchlist(tv: TVWatchlist): Flow<String>
+    suspend fun addTVToWatchlist(tv: TV)
+    suspend fun addTVToWatchlist(tv: TVDetail)
+    suspend fun addTVToWatchlist(tv: TVWatchlist)
+    suspend fun removeTVFromWatchlist(tv: TV)
+    suspend fun removeTVFromWatchlist(tv: TVDetail)
+    suspend fun removeTVFromWatchlist(tv: TVWatchlist)
     fun getTVWatchlist(): Flow<PagingData<TVWatchlist>>
     fun isTVInWatchlist(tvId: Int): Flow<Boolean>
 }
@@ -54,21 +56,11 @@ class TVRepositoryImpl(
             }
         ).flow.map { responses ->
             responses.map { it.toModel() }
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
-    override fun getAiringTodayTVShowsPreview(): Flow<Result<List<TV>>> = flow {
-        emit(Result.Loading)
-        try {
-            val tvShows = remoteDataSource.fetchTVAiringTodayPreview().results.map { it.toModel() }
-            if (tvShows.isNotEmpty()) {
-                emit(Result.Success(tvShows))
-            } else {
-                emit(Result.Empty)
-            }
-        } catch (e: Exception) {
-            emit(Result.Error(e.message.toString()))
-        }
+    override suspend fun getAiringTodayTVShowsPreview(): List<TV> {
+        return remoteDataSource.fetchTVAiringTodayPreview().results.map { it.toModel() }
     }
 
     override fun getOnTheAirTVShows(): Flow<PagingData<TV>> {
@@ -82,21 +74,11 @@ class TVRepositoryImpl(
             }
         ).flow.map { responses ->
             responses.map { it.toModel() }
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
-    override fun getOnTheAirTVShowsPreview(): Flow<Result<List<TV>>> = flow {
-        emit(Result.Loading)
-        try {
-            val tvShows = remoteDataSource.fetchTVOnTheAirPreview().results.map { it.toModel() }
-            if (tvShows.isNotEmpty()) {
-                emit(Result.Success(tvShows))
-            } else {
-                emit(Result.Empty)
-            }
-        } catch (e: Exception) {
-            emit(Result.Error(e.message.toString()))
-        }
+    override suspend fun getOnTheAirTVShowsPreview(): List<TV> {
+        return remoteDataSource.fetchTVOnTheAirPreview().results.map { it.toModel() }
     }
 
     override fun getPopularTVShows(): Flow<PagingData<TV>> {
@@ -110,21 +92,11 @@ class TVRepositoryImpl(
             }
         ).flow.map { responses ->
             responses.map { it.toModel() }
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
-    override fun getPopularTVShowsPreview(): Flow<Result<List<TV>>> = flow {
-        emit(Result.Loading)
-        try {
-            val tvShows = remoteDataSource.fetchTVPopularPreview().results.map { it.toModel() }
-            if (tvShows.isNotEmpty()) {
-                emit(Result.Success(tvShows))
-            } else {
-                emit(Result.Empty)
-            }
-        } catch (e: Exception) {
-            emit(Result.Error(e.message.toString()))
-        }
+    override suspend fun getPopularTVShowsPreview(): List<TV> {
+        return remoteDataSource.fetchTVPopularPreview().results.map { it.toModel() }
     }
 
     override fun getTopRatedTVShows(): Flow<PagingData<TV>> {
@@ -138,31 +110,15 @@ class TVRepositoryImpl(
             }
         ).flow.map { responses ->
             responses.map { it.toModel() }
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
-    override fun getTopRatedTVShowsPreview(): Flow<Result<List<TV>>> = flow {
-        emit(Result.Loading)
-        try {
-            val tvShows = remoteDataSource.fetchTVTopRatedPreview().results.map { it.toModel() }
-            if (tvShows.isNotEmpty()) {
-                emit(Result.Success(tvShows))
-            } else {
-                emit(Result.Empty)
-            }
-        } catch (e: Exception) {
-            emit(Result.Error(e.message.toString()))
-        }
+    override suspend fun getTopRatedTVShowsPreview(): List<TV> {
+        return remoteDataSource.fetchTVTopRatedPreview().results.map { it.toModel() }
     }
 
-    override fun getTVDetails(tvId: Int): Flow<Result<TVDetail>> = flow {
-        emit(Result.Loading)
-        try {
-            val tv = remoteDataSource.fetchTVDetails(tvId).toModel()
-            emit(Result.Success(tv))
-        } catch (e: Exception) {
-            emit(Result.Error(e.message.toString()))
-        }
+    override suspend fun getTVDetails(tvId: Int): TVDetail {
+        return remoteDataSource.fetchTVDetails(tvId).toModel()
     }
 
     override fun getTVRecommendations(tvId: Int): Flow<PagingData<TV>> {
@@ -176,22 +132,11 @@ class TVRepositoryImpl(
             }
         ).flow.map { responses ->
             responses.map { it.toModel() }
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
-    override fun getTVRecommendationsPreview(tvId: Int): Flow<Result<List<TV>>> = flow {
-        emit(Result.Loading)
-        try {
-            val tvShows =
-                remoteDataSource.fetchTVRecommendationsPreview(tvId).results.map { it.toModel() }
-            if (tvShows.isNotEmpty()) {
-                emit(Result.Success(tvShows))
-            } else {
-                emit(Result.Empty)
-            }
-        } catch (e: Exception) {
-            emit(Result.Error(e.message.toString()))
-        }
+    override suspend fun getTVRecommendationsPreview(tvId: Int): List<TV> {
+        return remoteDataSource.fetchTVRecommendationsPreview(tvId).results.map { it.toModel() }
     }
 
     override fun searchTVShows(query: String): Flow<PagingData<TV>> {
@@ -205,61 +150,31 @@ class TVRepositoryImpl(
             }
         ).flow.map { responses ->
             responses.map { it.toModel() }
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
-    override fun addTVToWatchlist(tv: TV): Flow<String> = flow {
-        try {
-            val result = localDataSource.insertTV(tv.toEntity())
-            emit(result)
-        } catch (e: Exception) {
-            emit("Error adding TV to watchlist: ${e.message}")
-        }
+    override suspend fun addTVToWatchlist(tv: TV) {
+        return localDataSource.insertTV(tv.toEntity())
     }
 
-    override fun addTVToWatchlist(tv: TVDetail): Flow<String> = flow {
-        try {
-            val result = localDataSource.insertTV(tv.toEntity())
-            emit(result)
-        } catch (e: Exception) {
-            emit("Error adding TV to watchlist: ${e.message}")
-        }
+    override suspend fun addTVToWatchlist(tv: TVDetail) {
+        return localDataSource.insertTV(tv.toEntity())
     }
 
-    override fun addTVToWatchlist(tv: TVWatchlist): Flow<String> = flow {
-        try {
-            val result = localDataSource.insertTV(tv.toEntity())
-            emit(result)
-        } catch (e: Exception) {
-            emit("Error adding TV to watchlist: ${e.message}")
-        }
+    override suspend fun addTVToWatchlist(tv: TVWatchlist) {
+        return localDataSource.insertTV(tv.toEntity())
     }
 
-    override fun removeTVFromWatchlist(tv: TV): Flow<String> = flow {
-        try {
-            val result = localDataSource.deleteTV(tv.toEntity())
-            emit(result)
-        } catch (e: Exception) {
-            emit("Error removing TV from watchlist: ${e.message}")
-        }
+    override suspend fun removeTVFromWatchlist(tv: TV) {
+        return localDataSource.deleteTV(tv.toEntity())
     }
 
-    override fun removeTVFromWatchlist(tv: TVDetail): Flow<String> = flow {
-        try {
-            val result = localDataSource.deleteTV(tv.toEntity())
-            emit(result)
-        } catch (e: Exception) {
-            emit("Error removing TV from watchlist: ${e.message}")
-        }
+    override suspend fun removeTVFromWatchlist(tv: TVDetail) {
+        return localDataSource.deleteTV(tv.toEntity())
     }
 
-    override fun removeTVFromWatchlist(tv: TVWatchlist): Flow<String> = flow {
-        try {
-            val result = localDataSource.deleteTV(tv.toEntity())
-            emit(result)
-        } catch (e: Exception) {
-            emit("Error removing TV from watchlist: ${e.message}")
-        }
+    override suspend fun removeTVFromWatchlist(tv: TVWatchlist) {
+        return localDataSource.deleteTV(tv.toEntity())
     }
 
     override fun getTVWatchlist(): Flow<PagingData<TVWatchlist>> {
@@ -273,7 +188,7 @@ class TVRepositoryImpl(
             }
         ).flow.map { responses ->
             responses.map { it.toModel() }
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
     override fun isTVInWatchlist(tvId: Int): Flow<Boolean> = flow {
@@ -283,5 +198,5 @@ class TVRepositoryImpl(
         } catch (e: Exception) {
             emit(false)
         }
-    }
+    }.flowOn(Dispatchers.IO)
 }
