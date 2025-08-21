@@ -67,11 +67,14 @@ kotlin {
                 implementation(compose.foundation)
                 implementation(compose.material3)
                 implementation(compose.ui)
+                @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
                 implementation(compose.components.uiToolingPreview)
 
                 implementation(libs.coil.compose)
                 implementation(libs.coil.network.ktor)
+                implementation(libs.koin.core)
+                implementation(libs.koin.compose.viewmodel)
 
                 implementation(libs.navigation.compose)
                 implementation(libs.lifecycle.runtime.compose)
@@ -91,9 +94,13 @@ kotlin {
 
         androidMain {
             dependencies {
-                // Add Android-specific dependencies here. Note that this source set depends on
-                // commonMain by default and will correctly pull the Android artifacts of any KMP
-                // dependencies declared in commonMain.
+                implementation(libs.androidx.core.ktx)
+                implementation(libs.androidx.compose.ui.tooling.preview)
+                implementation(libs.androidx.activity.compose)
+                implementation(compose.preview)
+                implementation(compose.uiTooling)
+                implementation(libs.androidx.emoji2)
+                implementation(libs.androidx.customview.poolingcontainer)
             }
         }
 
@@ -107,13 +114,11 @@ kotlin {
 
         iosMain {
             dependencies {
-                // Add iOS-specific dependencies here. This a source set created by Kotlin Gradle
-                // Plugin (KGP) that each specific iOS target (e.g., iosX64) depends on as
-                // part of KMP’s default source set hierarchy. Note that this source set depends
-                // on common by default and will correctly pull the iOS artifacts of any
-                // KMP dependencies declared in commonMain.
             }
         }
     }
+}
 
+dependencies {
+    commonMainImplementation(libs.androidx.compose.ui.tooling)
 }

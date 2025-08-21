@@ -30,6 +30,7 @@ kotlin {
 
     sourceSets {
         androidMain.dependencies {
+            implementation(libs.androidx.core.ktx)
             implementation(libs.androidx.compose.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.okhttp)
@@ -69,7 +70,7 @@ kotlin {
 
 android {
     namespace = "com.gosty.seenit"
-    compileSdk = 36
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.gosty.seenit"
@@ -77,7 +78,6 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
-
     }
     packaging {
         resources {

@@ -15,11 +15,11 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.gosty.common.routes.destinations
 import com.gosty.common.routes.navItem
-import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun BottomNavigation(
-    navController: NavController
+    navController: NavController,
+    labels: Map<String, String>,
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -47,7 +47,7 @@ fun BottomNavigation(
                     },
                     label = {
                         Text(
-                            text = stringResource(screen.resource!!),
+                            text = labels[screen.route] ?: screen.route,
                             fontWeight = if (currentRoute == screen.route) FontWeight.Bold else FontWeight.Normal
                         )
                     },

@@ -1,4 +1,4 @@
-package com.jetbrains.kmpapp
+package com.gosty.seenit
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

@@ -6,19 +6,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.stringResource
-import seenit.core.common.generated.resources.Res
-import seenit.core.common.generated.resources.no_data_available
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun EmptyScreenContent(
     modifier: Modifier = Modifier,
+    notDataText: String
 ) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center,
     ) {
-        Text(stringResource(Res.string.no_data_available))
+        Text(text = notDataText)
     }
 }

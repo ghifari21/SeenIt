@@ -10,6 +10,21 @@
     <string name="label_credits">Credits</string>
 
     <string name="back">Back</string>
+    <string name="retry">Retry</string>
 
     <string name="no_data_available">No data available</string>
+
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="explore">Explore</string>
+    <string name="watchlist">Watchlist</string>
+    <string name="movies">Movies</string>
+    <string name="tv_shows">TV Shows</string>
+    <string name="now_playing">Now Playing</string>
+    <string name="popular">Popular</string>
+    <string name="top_rated">Top Rated</string>
+    <string name="upcoming">Upcoming</string>
+    <string name="airing_today">Airing Today</string>
+    <string name="on_the_air">On The Air</string>
+    <string name="search_hint">Search for movies or TV shows</string>
 </resources>

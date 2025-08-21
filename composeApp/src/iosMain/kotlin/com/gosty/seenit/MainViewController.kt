@@ -1,4 +1,4 @@
-package com.jetbrains.kmpapp
+package com.gosty.seenit
 
 import androidx.compose.ui.window.ComposeUIViewController
 

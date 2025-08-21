@@ -1,20 +1,24 @@
-package com.jetbrains.kmpapp.di
+package com.gosty.seenit.di
 
 import com.gosty.data.di.dataPlatformModule
 import com.gosty.data.di.databaseModule
 import com.gosty.data.di.networkModule
 import com.gosty.data.di.repositoryModule
 import com.gosty.domain.di.useCasesModule
+import com.gosty.home.di.homeModule
 import org.koin.core.context.startKoin
+import org.koin.dsl.KoinAppDeclaration
 
-fun initKoin() {
+fun initKoin(config: KoinAppDeclaration? = null) {
     startKoin {
+        config?.invoke(this)
         modules(
             networkModule,
             dataPlatformModule,
             databaseModule,
             repositoryModule,
-            useCasesModule
+            useCasesModule,
+            homeModule
         )
     }
 }

@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.androidx.room)
     alias(libs.plugins.ksp)
     alias(libs.plugins.buildkonfig)
+    alias(libs.plugins.kotlinxSerialization)
 }
 
 val localProperties = Properties()
