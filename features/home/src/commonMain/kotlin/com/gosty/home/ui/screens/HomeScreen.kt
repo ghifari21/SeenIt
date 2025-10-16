@@ -18,6 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.gosty.common.routes.ContentType
+import com.gosty.common.routes.ExploreCategory
 import com.gosty.common.ui.components.HorizontalGridSection
 import com.gosty.home.ui.components.HeroBanner
 import org.koin.compose.viewmodel.koinViewModel
@@ -26,6 +28,8 @@ import org.koin.compose.viewmodel.koinViewModel
 fun HomeScreen(
     modifier: Modifier = Modifier,
     labels: Map<String, String>,
+    onNavigateToExplore: (ExploreCategory) -> Unit,
+    onNavigateToDetail: (Long, ContentType) -> Unit
 ) {
     val viewModel = koinViewModel<HomeViewModel>()
     val state by viewModel.uiState.collectAsState()
@@ -83,7 +87,7 @@ private fun HomeContent(
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
-            .padding(all = 16.dp)
+            .padding(all = 16.dp),
     ) {
         HeroBanner(
             items = state.bannerItems

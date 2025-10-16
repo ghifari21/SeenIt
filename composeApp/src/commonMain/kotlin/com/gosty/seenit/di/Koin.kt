@@ -5,6 +5,7 @@ import com.gosty.data.di.databaseModule
 import com.gosty.data.di.networkModule
 import com.gosty.data.di.repositoryModule
 import com.gosty.domain.di.useCasesModule
+import com.gosty.explore.di.exploreModule
 import com.gosty.home.di.homeModule
 import org.koin.core.context.startKoin
 import org.koin.dsl.KoinAppDeclaration
@@ -18,7 +19,8 @@ fun initKoin(config: KoinAppDeclaration? = null) {
             databaseModule,
             repositoryModule,
             useCasesModule,
-            homeModule
+            homeModule,
+            exploreModule
         )
     }
 }

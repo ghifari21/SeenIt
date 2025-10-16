@@ -64,13 +64,17 @@ kotlin {
             implementation(projects.core.data)
             implementation(projects.core.domain)
             implementation(projects.features.home)
+            implementation(projects.features.search)
+            implementation(projects.features.watchlist)
+            implementation(projects.features.detail)
+            implementation(projects.features.explore)
         }
     }
 }
 
 android {
     namespace = "com.gosty.seenit"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.gosty.seenit"

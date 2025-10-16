@@ -40,4 +40,12 @@ sealed class Screen(
         activeIcon = Icons.Filled.Movie,
         inactiveIcon = Icons.Outlined.Movie
     )
+
+    object MovieDetail : Screen(
+        route = "movie_detail"
+    )
+
+    object TVShowDetail : Screen(
+        route = "tv_show_detail"
+    )
 }

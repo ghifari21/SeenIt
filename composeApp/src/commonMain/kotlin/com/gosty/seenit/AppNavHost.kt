@@ -3,8 +3,10 @@ package com.gosty.seenit
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.gosty.common.routes.Screen
 import com.gosty.home.ui.screens.HomeScreen
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -32,7 +34,7 @@ fun AppNavHost(
         startDestination = Screen.Home.route,
         modifier = modifier
     ) {
-        composable(Screen.Home.route) {
+        composable(route = Screen.Home.route) {
             HomeScreen(
                 modifier = Modifier,
                 labels = mapOf(
@@ -46,8 +48,21 @@ fun AppNavHost(
                     "onTheAir" to stringResource(Res.string.on_the_air),
                     "explore" to stringResource(Res.string.explore),
                     "retry" to stringResource(Res.string.retry)
-                )
+                ),
+                onNavigateToExplore = { category ->
+                    navController.navigate("${Screen.Explore.route}/${category.name}")
+                },
+                onNavigateToDetail = { _, _ -> }
             )
+        }
+
+        composable(
+            route = "${Screen.Explore.route}/{category}",
+            arguments = listOf(navArgument(name = "category") {
+                type = NavType.StringType
+            })
+        ) {
+
         }
     }
 }

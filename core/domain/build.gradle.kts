@@ -61,8 +61,9 @@ kotlin {
             dependencies {
                 implementation(libs.kotlin.stdlib)
                 implementation(libs.koin.core)
-                implementation(libs.androidx.paging.common)
-                
+                implementation(libs.paging.common)
+                implementation(libs.paging.compose)
+
                 implementation(projects.core.common)
                 implementation(projects.core.data)
             }
